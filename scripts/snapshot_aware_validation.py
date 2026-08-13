@@ -31,8 +31,8 @@ Reproduce the sampling frame used in the manuscript with:
     https://ftp.ncbi.nlm.nih.gov/genomes/refseq/viral/assembly_summary.txt
   awk -F'\\t' 'NR>2 {print $6}' assembly_summary.txt | sort -n | uniq > all_taxids.txt
 
-Reproduce the thirteen per-snapshot taxonomy files (not redistributed here, per NCBI's
-terms) with:
+Reproduce the thirteen per-snapshot taxonomy files (not redistributed here given their
+combined size, and because NCBI already archives them permanently at a stable URL) with:
   declare -A MSL_DATE=(
     [msl29]=2014-12-01 [msl30]=2015-12-01 [msl31]=2016-12-01 [msl32]=2017-12-01
     [msl33]=2018-06-01 [msl34]=2018-12-01 [msl35]=2019-12-01 [msl36]=2020-12-01
