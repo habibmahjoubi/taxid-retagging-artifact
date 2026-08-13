@@ -2,20 +2,21 @@
 
 Code and analysis scripts for:
 
-> Mahjoubi H. **False Novelty from Taxid Retagging in Historical NCBI Taxonomy
-> Reconstruction.** Brief Report, submitted to *Archives of Virology* / posted on
-> bioRxiv. DOI: *to be added once the preprint is live*.
+> Mahjoubi H. **When Current Taxids Make Historical Taxa Look New.** Critical
+> Comments, Journal of Bioinformatics and Computational Biology. Preprint:
+> Zenodo, https://doi.org/10.5281/zenodo.21861803.
 
 ## Summary
 
 Reconstructing a historical reference database by resolving each sequence's identifier via a
-current-day lookup manufactures false novelty whenever the identifier has been renumbered.
-Among 56 viral sequences flagged as newly created between two NCBI taxonomy snapshots
-(ICTV MSL39 -> MSL40), 39 existed at the earlier snapshot under a predecessor taxid later
-merged into today's identifier. Retagging these 39 sequences with their period-valid
-identifier recovers 99.3% correct Kraken2 classification, versus 0.0% under naive
-current-taxid tagging. Extended library-wide, the same mechanism recovers 218-269 identifiers
-per snapshot for ten of thirteen annual transitions studied (2014-2022).
+current-day lookup can make an already-existing taxon look newly created whenever the
+identifier has been renumbered -- apparent novelty caused by identifier evolution, not
+biological novelty. Among 56 viral sequences flagged as newly created between two NCBI
+taxonomy snapshots (ICTV MSL39 -> MSL40), 39 existed at the earlier snapshot under a
+predecessor taxid later merged into today's identifier. Retagging these 39 sequences with
+their period-valid identifier recovers 99.3% correct Kraken2 classification, versus 0.0% under
+naive current-taxid tagging. Extended library-wide, the same mechanism recovers 218-269
+identifiers per snapshot for ten of thirteen dated snapshots studied (2014-2022).
 
 This repository contains the scripts that produced that quantification (Table 1) and the
 experimental verification (Figure 1). It does **not** contain the full pipeline for the
@@ -43,6 +44,12 @@ scripts/
                                           predecessor identifier and reclassifies their
                                           simulated reads -> Figure 1's 99.3%/0.0% result.
   paperA_figure.py                       Renders Figure 1 from the reported percentages.
+  snapshot_aware_validation.py           Snapshot-specific validation of the merge-aware
+                                          audit (Limitations): checks each snapshot's own
+                                          nodes.dmp/merged.dmp directly, in both directions,
+                                          instead of only the latest cumulative merged.dmp --
+                                          recovers reversal cases (e.g. taxid 35320) that the
+                                          cumulative-only method misses.
 ```
 
 ## Dependencies
@@ -93,6 +100,11 @@ paths.
 6. Run the experimental verification on the 56-sequence panel (Figure 1 data):
    `KDCR_BASE=/path/to/data python scripts/m1_artifact_verify.py`
 7. Render Figure 1: `python scripts/paperA_figure.py`
+8. Run the snapshot-specific validation (Limitations): download each snapshot's own
+   `nodes.dmp`/`merged.dmp` (not just the latest) and a sample of tagged taxids into
+   `$KDCR_BASE/extracted/<msl>/{nodes.dmp,merged.dmp}` and `$KDCR_BASE/all_taxids.txt`
+   (see the script's docstring for the exact commands), then:
+   `KDCR_BASE=/path/to/data python scripts/snapshot_aware_validation.py`
 
 ## License
 

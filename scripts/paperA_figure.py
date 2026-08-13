@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Figure 1: naive current-taxid tagging manufactures a false 'before' absence for
+"""Figure 1: naive current-taxid tagging manufactures an apparent 'before' absence for
 taxid-renumbering artifacts, making them indistinguishable from genuinely novel taxa until
 the tagging is corrected.
 
@@ -43,7 +43,7 @@ ax.set_xticklabels(groups, fontsize=9)
 ax.legend(loc="upper center", bbox_to_anchor=(0.5, 1.16), ncol=2, frameon=False, fontsize=9)
 ax.spines["top"].set_visible(False)
 ax.spines["right"].set_visible(False)
-ax.set_title("Naive current-taxid tagging manufactures a false 'before' absence", fontsize=11, pad=45)
+ax.set_title("Naive current-taxid tagging manufactures an apparent 'before' absence", fontsize=11, pad=45)
 
 fig.tight_layout()
 out_path = os.environ.get("PAPERA_FIGURE_OUT", "results/paperA_figure1.png")
