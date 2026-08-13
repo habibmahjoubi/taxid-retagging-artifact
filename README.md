@@ -114,5 +114,6 @@ redistributed here.
 
 ## Citation
 
-If you use this code, please cite the manuscript above. A permanent DOI for this exact
-repository snapshot is provided by Zenodo (badge/link to be added once minted).
+If you use this code, please cite the manuscript above. A permanent DOI for this
+repository is provided by Zenodo: https://doi.org/10.5281/zenodo.21859349 (concept DOI,
+always resolves to the latest archived version).
