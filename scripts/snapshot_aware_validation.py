@@ -31,10 +31,21 @@ Reproduce the sampling frame used in the manuscript with:
     https://ftp.ncbi.nlm.nih.gov/genomes/refseq/viral/assembly_summary.txt
   awk -F'\\t' 'NR>2 {print $6}' assembly_summary.txt | sort -n | uniq > all_taxids.txt
 
-Reproduce the per-snapshot taxonomy files with the dates and download loop in
-scripts/download_taxdumps.sh style tooling against
-https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump_archive/taxdmp_<date>.zip, extracting only
-nodes.dmp and merged.dmp per date (msl29=2014-12-01 ... msl41=2025-12-01, msl33=2018-06-01).
+Reproduce the thirteen per-snapshot taxonomy files (not redistributed here, per NCBI's
+terms) with:
+  declare -A MSL_DATE=(
+    [msl29]=2014-12-01 [msl30]=2015-12-01 [msl31]=2016-12-01 [msl32]=2017-12-01
+    [msl33]=2018-06-01 [msl34]=2018-12-01 [msl35]=2019-12-01 [msl36]=2020-12-01
+    [msl37]=2021-12-01 [msl38]=2022-12-01 [msl39]=2023-12-01 [msl40]=2024-12-01
+    [msl41]=2025-12-01
+  )
+  for msl in "${!MSL_DATE[@]}"; do
+    date="${MSL_DATE[$msl]}"
+    curl -sL -o "taxdmp_${date}.zip" \\
+      "https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump_archive/taxdmp_${date}.zip"
+    mkdir -p "extracted/$msl"
+    unzip -o -q "taxdmp_${date}.zip" nodes.dmp merged.dmp -d "extracted/$msl"
+  done
 """
 import math
 import os
