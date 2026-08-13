@@ -4,7 +4,7 @@ Code and analysis scripts for:
 
 > Mahjoubi H. **When Current Taxids Make Historical Taxa Look New.** Critical
 > Comments, Journal of Bioinformatics and Computational Biology. Preprint:
-> Zenodo, https://doi.org/10.5281/zenodo.21861803.
+> Zenodo, https://doi.org/10.5281/zenodo.21861802.
 
 ## Summary
 
