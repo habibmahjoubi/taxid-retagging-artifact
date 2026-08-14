@@ -15,10 +15,10 @@ biological novelty. Among 56 viral sequences flagged as newly created between tw
 taxonomy snapshots (ICTV MSL39 -> MSL40), 39 existed at the earlier snapshot under a
 predecessor taxid later merged into today's identifier. Retagging these 39 sequences with
 their period-valid identifier recovers 99.3% correct Kraken2 classification, versus 0.0% under
-naive current-taxid tagging. Extended library-wide, the same mechanism recovers 218-269
+naive current-taxid tagging. Extended library-wide, the same mechanism recovers 222-272
 identifiers per snapshot for ten of thirteen dated snapshots studied (2014-2022).
 
-This repository contains the scripts that produced that quantification (Table 1) and the
+This repository contains the scripts that produced that quantification (Table 2) and the
 experimental verification (Figure 1). It does **not** contain the full pipeline for the
 larger revalidation-framework study this note is drawn from (in preparation, cited above as
 the companion manuscript) -- only the self-contained taxid-retagging analysis.
@@ -35,20 +35,22 @@ scripts/
   find_newly_added_taxon.py              Identify candidate sequences whose taxid is present
                                           in a newer snapshot but absent from an older one
                                           (source of the 56-sequence candidate panel).
-  m1_quantify_merge_fix.py               Library-wide merge-aware audit across all 13
-                                          snapshots -> Table 1 (naive vs. merge-corrected
-                                          per-snapshot counts, 13-way fixed-library
-                                          intersection).
+  m1_quantify_merge_fix.py               Cumulative-only merge-aware audit (predecessor via
+                                          the single latest merged.dmp only). Superseded by
+                                          snapshot_aware_validation.py for Table 2; kept for
+                                          the comparability check reported there and in the
+                                          manuscript's Analysis Protocol.
   m1_artifact_verify.py                  Builds a supplementary Kraken2 database with the 39
                                           artifact sequences retagged to their period-valid
                                           predecessor identifier and reclassifies their
                                           simulated reads -> Figure 1's 99.3%/0.0% result.
   paperA_figure.py                       Renders Figure 1 from the reported percentages.
-  snapshot_aware_validation.py           Snapshot-specific validation of the merge-aware
-                                          audit (Limitations): checks each snapshot's own
-                                          nodes.dmp/merged.dmp directly, in both directions,
-                                          instead of only the latest cumulative merged.dmp --
-                                          recovers reversal cases (e.g. taxid 35320) that the
+  snapshot_aware_validation.py           Snapshot-specific merge-aware audit -> Table 2:
+                                          checks each snapshot's own nodes.dmp/merged.dmp
+                                          directly, in both directions, instead of only the
+                                          latest cumulative merged.dmp -- recovers reversal
+                                          cases (e.g. taxid 35320) and single-snapshot cases
+                                          (e.g. taxid 2651918 at MSL41) that the
                                           cumulative-only method misses.
 ```
 
@@ -95,16 +97,16 @@ paths.
    `python scripts/filter_fasta_by_taxid_existence.py IN_FASTA NODES_DMP OUT_FASTA`
 4. Identify newly-added-taxid candidates between two snapshots:
    `python scripts/find_newly_added_taxon.py OLD_NODES_DMP NEW_NODES_DMP TAGGED_FASTA`
-5. Run the library-wide merge-aware audit (Table 1):
+5. Run the cumulative-only merge-aware audit (comparability check only, not Table 2):
    `KDCR_BASE=/path/to/data python scripts/m1_quantify_merge_fix.py`
 6. Run the experimental verification on the 56-sequence panel (Figure 1 data):
    `KDCR_BASE=/path/to/data python scripts/m1_artifact_verify.py`
 7. Render Figure 1: `python scripts/paperA_figure.py`
-8. Run the snapshot-specific validation (Limitations): download each snapshot's own
-   `nodes.dmp`/`merged.dmp` (not just the latest) and a sample of tagged taxids into
-   `$KDCR_BASE/extracted/<msl>/{nodes.dmp,merged.dmp}` and `$KDCR_BASE/all_taxids.txt`
-   (see the script's docstring for the exact commands), then:
-   `KDCR_BASE=/path/to/data python scripts/snapshot_aware_validation.py`
+8. Run the snapshot-specific merge-aware audit (Table 2): download each snapshot's own
+   `nodes.dmp`/`merged.dmp` (not just the latest) and the independently obtained
+   population of tagged taxids into `$KDCR_BASE/extracted/<msl>/{nodes.dmp,merged.dmp}`
+   and `$KDCR_BASE/all_taxids.txt` (see the script's docstring for the exact commands),
+   then: `KDCR_BASE=/path/to/data python scripts/snapshot_aware_validation.py`
 
 ## License
 
