@@ -2,9 +2,34 @@
 
 Code and analysis scripts for:
 
-> Mahjoubi H. **When Current Taxids Make Historical Taxa Look New.** Critical
-> Comments, Journal of Bioinformatics and Computational Biology. Preprint:
-> Zenodo, https://doi.org/10.5281/zenodo.21861802.
+> Mahjoubi H. **When current taxids make historical taxa look new.** J Bioinform
+> Comput Biol 24(4):2671004 (2026). https://doi.org/10.1142/S0219720026710046.
+> Preprint: Zenodo, https://doi.org/10.5281/zenodo.21861802.
+
+## Correction (24 September 2026)
+
+After publication, the author found that the article's statement that 17 of the 56 flagged
+sequences were "genuinely absent" from the MSL39 snapshot "under any identifier" is incorrect
+for 16 of them. The merge-aware audit only sees changes recorded in `merged.dmp`; it cannot see
+a sequence being reassigned to a **child node created later beneath a taxon that already
+existed** (widespread in 2024, when NCBI separated virus names from binomial species names).
+Checked against NCBI node-creation records and the official Kraken2 viral index of
+9 October 2023:
+
+- 15 of the 17 are assigned today to no-rank virus-level nodes created in 2024 beneath species
+  or sub-species nodes already valid at MSL39; their genomes were in the October 2023 reference
+  under those nodes (e.g. Canine distemper virus, NC_001921.1: taxid 3139435, created
+  2024-04-15 beneath *Morbillivirus canis*, 3052342);
+- 1 (NC_043423.1) has a predecessor identifier (565624) merged into its current one after the
+  `merged.dmp` snapshot used;
+- only 1 (NC_121511.1, Salmonella phage SopEPhi) is a genome absent from the contemporary
+  reference.
+
+Apparent novelty caused by identifier evolution therefore accounts for **55 of the 56**
+sequences, not 39. The audit of the 39 merge artifacts, the retagging experiment (Figure 1),
+Table 2 and the recommendations are unaffected. A corrigendum has been submitted to the
+journal. The check is reproducible with `scripts/check_child_node_insertions.py` (input:
+`data/no_merge_predecessor_17.csv`).
 
 ## Summary
 
@@ -13,7 +38,8 @@ current-day lookup can make an already-existing taxon look newly created wheneve
 identifier has been renumbered -- apparent novelty caused by identifier evolution, not
 biological novelty. Among 56 viral sequences flagged as newly created between two NCBI
 taxonomy snapshots (ICTV MSL39 -> MSL40), 39 existed at the earlier snapshot under a
-predecessor taxid later merged into today's identifier. Retagging these 39 sequences with
+predecessor taxid later merged into today's identifier (and, per the correction above, 16 of
+the remaining 17 were also already represented there). Retagging these 39 sequences with
 their period-valid identifier recovers 99.3% correct Kraken2 classification, versus 0.0% under
 naive current-taxid tagging. Extended library-wide, the same mechanism recovers 222-272
 identifiers per snapshot for ten of thirteen dated snapshots studied (2014-2022).
@@ -52,6 +78,15 @@ scripts/
                                           cases (e.g. taxid 35320) and single-snapshot cases
                                           (e.g. taxid 2651918 at MSL41) that the
                                           cumulative-only method misses.
+  check_child_node_insertions.py         Post-publication check (see Correction): for
+                                          sequences without a merge predecessor, tests
+                                          whether the current taxid is a node created later
+                                          beneath a pre-existing taxon, and whether the genome
+                                          was already in the Kraken2 viral index of
+                                          2023-10-09. Needs internet access only.
+data/
+  no_merge_predecessor_17.csv            The 17 sequences the article classified as
+                                          genuinely absent (input to the check above).
 ```
 
 ## Dependencies
@@ -107,6 +142,8 @@ paths.
    population of tagged taxids into `$KDCR_BASE/extracted/<msl>/{nodes.dmp,merged.dmp}`
    and `$KDCR_BASE/all_taxids.txt` (see the script's docstring for the exact commands),
    then: `KDCR_BASE=/path/to/data python scripts/snapshot_aware_validation.py`
+9. Post-publication check of the sequences without a merge predecessor (Correction):
+   `python scripts/check_child_node_insertions.py`
 
 ## License
 
@@ -116,6 +153,6 @@ redistributed here.
 
 ## Citation
 
-If you use this code, please cite the manuscript above. A permanent DOI for this
+If you use this code, please cite the article above (and its corrigendum, once published). A permanent DOI for this
 repository is provided by Zenodo: https://doi.org/10.5281/zenodo.21859349 (concept DOI,
 always resolves to the latest archived version).
